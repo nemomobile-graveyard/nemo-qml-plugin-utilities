@@ -13,6 +13,7 @@ Builder: qmake
 PkgConfigBR:
     - QtCore >= 4.7.0
     - QtDeclarative
+    - x11
 Provides:
     - nemo-qml-plugins-utilities > 0.3.21
 Obsoletes:
