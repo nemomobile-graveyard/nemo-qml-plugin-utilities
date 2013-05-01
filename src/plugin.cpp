@@ -31,11 +31,26 @@
  */
 
 #include <QtGlobal>
-#include <QtDeclarative>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+# include <QtQml>
+# include <QQmlEngine>
+# include <QQmlExtensionPlugin>
+# define QDeclarativeEngine QQmlEngine
+# define QDeclarativeExtensionPlugin QQmlExtensionPlugin
+#else
+# include <QtDeclarative>
+# include <QDeclarativeEngine>
+# include <QDeclarativeExtensionPlugin>
+#endif
 #include "declarativewindowattributes.h"
 
 class Q_DECL_EXPORT NemoUtilsPlugin : public QDeclarativeExtensionPlugin
 {
+    Q_OBJECT
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    Q_PLUGIN_METADATA(IID "org.nemomobile.utilities")
+#endif
+
 public:
     NemoUtilsPlugin()
     {
@@ -58,5 +73,8 @@ public:
     }
 };
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 Q_EXPORT_PLUGIN2(nemoutils, NemoUtilsPlugin);
+#endif
 
+#include "plugin.moc"
