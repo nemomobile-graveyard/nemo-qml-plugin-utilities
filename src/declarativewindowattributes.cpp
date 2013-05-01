@@ -31,9 +31,16 @@
  */
 
 #include "declarativewindowattributes.h"
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QGuiApplication>
+#include <QQuickWindow>
+#include <qpa/qplatformnativeinterface.h>
+#else
 #include <QGraphicsView>
 #include <QX11Info>
+#endif
 #include <QTimer>
+#include <QDebug>
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -65,7 +72,16 @@ void DeclarativeWindowAttributes::setCannotMinimize(bool on)
 
 bool DeclarativeWindowAttributes::updateX11(bool delayed)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    if (qApp->platformName() != QLatin1String("xcb")) {
+        qWarning() << "org.nemomobile.utilities: unsupported platform:" << qApp->platformName();
+        return false;
+    }
+    QWindow *view = window();
+#else
     QWidget *view = scene() ? scene()->views().value(0) : 0;
+#endif
+
     if (!view) {
         if (delayed)
             qWarning() << "org.nemomobile.utilities: WindowAttributes has no window";
@@ -74,20 +90,28 @@ bool DeclarativeWindowAttributes::updateX11(bool delayed)
         return false;
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    WId winId = window()->winId();
+    QPlatformNativeInterface *iface = qApp->platformNativeInterface();
+    Display *display = reinterpret_cast<Display *>(iface->nativeResourceForScreen("display", QGuiApplication::primaryScreen()));
+#else
     if (!view->isWindow())
         view = view->window();
 
+    WId winId = view->winId();
     Display *display = QX11Info::display();
+#endif
+
     Atom stackingLayerAtom = XInternAtom(display, "_MEEGO_STACKING_LAYER", False);
     Atom cannotMinimizeAtom = XInternAtom(display, "_MEEGOTOUCH_CANNOT_MINIMIZE", False);
 
     if (stackingLayerAtom != None) {
         if (m_stackingLayer) {
             long l = m_stackingLayer;
-            XChangeProperty(display, view->winId(), stackingLayerAtom, XA_CARDINAL,
+            XChangeProperty(display, winId, stackingLayerAtom, XA_CARDINAL,
                             32, PropModeReplace, (unsigned char*)&l, 1);
         } else {
-            XDeleteProperty(display, view->winId(), stackingLayerAtom);
+            XDeleteProperty(display, winId, stackingLayerAtom);
         }
     }
 
@@ -95,10 +119,10 @@ bool DeclarativeWindowAttributes::updateX11(bool delayed)
     if (cannotMinimizeAtom != None) {
         if (m_cannotMinimize) {
             long v = 1;
-            XChangeProperty(display, view->winId(), cannotMinimizeAtom, XA_CARDINAL,
+            XChangeProperty(display, winId, cannotMinimizeAtom, XA_CARDINAL,
                             32, PropModeReplace, (unsigned char*)&v, 1);
         } else {
-            XDeleteProperty(display, view->winId(), cannotMinimizeAtom);
+            XDeleteProperty(display, winId, cannotMinimizeAtom);
         }
     }
 
