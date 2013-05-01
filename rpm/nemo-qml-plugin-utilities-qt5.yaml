@@ -1,0 +1,20 @@
+Name: nemo-qml-plugin-utilities-qt5
+Summary: Utilities plugin for Nemo Mobile
+URL: https://github.com/nemomobile/nemo-qml-plugin-utilities
+Group: System/Libraries
+Description: "%{summary}."
+Version: 0.0.0
+Release: 1
+Sources:
+    - "%{name}-%{version}.tar.bz2"
+License: LGPLv2.1
+Configure: none
+Builder: qmake5
+PkgConfigBR:
+    - Qt5Core
+    - Qt5Qml
+    - Qt5Quick
+    - x11
+Files:
+    - "%{_libdir}/qt5/qml/org/nemomobile/utilities/libnemoutilities.so"
+    - "%{_libdir}/qt5/qml/org/nemomobile/utilities/qmldir"
