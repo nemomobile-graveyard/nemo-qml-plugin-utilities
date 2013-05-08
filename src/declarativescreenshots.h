@@ -42,12 +42,12 @@
    Screenshots can be taken of the root window or of specific components.
  */
 
-class DeclarativeScreenshots : public QDeclarativeItem
+class DeclarativeScreenshots : public QObject
 {
     Q_OBJECT
 
 public:
-    DeclarativeScreenshots(QDeclarativeItem *parent = 0);
+    DeclarativeScreenshots(QObject *parent = 0);
 
     /*!
        \qmlproperty string path
@@ -112,7 +112,7 @@ public:
        \qmlmethod bool Screenshots::take(real x, real y, real width, real height)
 
        Takes a screenshot of the current target, cropped to the specified
-       rectangle. 
+       rectangle.
        Returns true if the operation was successful, otherwise false.
      */
     Q_INVOKABLE bool take(qreal x, qreal y, qreal height, qreal width);

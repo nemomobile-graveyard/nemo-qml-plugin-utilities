@@ -42,8 +42,8 @@
 #include <QImageWriter>
 #include <QPainter>
 
-DeclarativeScreenshots::DeclarativeScreenshots(QDeclarativeItem *parent)
-  : QDeclarativeItem(parent), m_name("screenshot"), m_target(0),
+DeclarativeScreenshots::DeclarativeScreenshots(QObject *parent)
+  : QObject(parent), m_name("screenshot"), m_target(0),
     m_format("png"), m_formatSupported(true) {
     m_path = QDesktopServices::storageLocation(
                 QDesktopServices::PicturesLocation);
