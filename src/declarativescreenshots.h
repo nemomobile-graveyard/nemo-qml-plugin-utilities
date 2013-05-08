@@ -101,6 +101,17 @@ public:
     bool formatSupported() const { return m_formatSupported; }
 
     /*!
+       \qmlproperty real rotation
+
+       Rotate the screenshot before saving it. This is most useful when taking
+       desktop screenshots of a rotated application. Rotation is clockwide,
+       measured in degrees.
+     */
+    Q_PROPERTY(qreal rotation READ rotation WRITE setRotation NOTIFY rotationChanged)
+    qreal rotation() const { return m_rotation; }
+    void setRotation(qreal rotation);
+
+    /*!
        \qmlmethod bool Screenshots::take()
 
        Takes a screenshot of the current target and saves it as a file.
@@ -123,6 +134,7 @@ signals:
     void targetChanged();
     void formatChanged();
     void formatSupportedChanged();
+    void rotationChanged();
 
 private slots:
     void targetDestroyed();
@@ -133,6 +145,7 @@ private:
     QDeclarativeItem *m_target;
     QString m_format;
     bool m_formatSupported;
+    qreal m_rotation;
 };
 
 #endif

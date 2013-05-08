@@ -39,8 +39,11 @@
 #include <QDir>
 #include <QFile>
 #include <QGraphicsScene>
+#include <QImage>
 #include <QImageWriter>
 #include <QPainter>
+#include <QPixmap>
+#include <QTransform>
 
 DeclarativeScreenshots::DeclarativeScreenshots(QObject *parent)
   : QObject(parent), m_name("screenshot"), m_target(0),
@@ -108,10 +111,17 @@ void DeclarativeScreenshots::setFormat(const QString & format) {
         emit formatSupportedChanged();
 }
 
+void DeclarativeScreenshots::setRotation(qreal rotation) {
+    if (rotation == m_rotation)
+        return;
+    m_rotation = rotation;
+    emit rotationChanged();
+}
+
 bool DeclarativeScreenshots::take(qreal x, qreal y, qreal width, qreal height) {
     QString timestamp = QDateTime::currentDateTimeUtc()
                         .toString("-yyyyMMdd-hhmmsszzz.");
-    QPixmap snapshot;
+    QImage snapshot;
 
     if (m_target) {
         QGraphicsScene *scene = m_target->scene();
@@ -125,7 +135,8 @@ bool DeclarativeScreenshots::take(qreal x, qreal y, qreal width, qreal height) {
 
         QRectF mappedRect = m_target->mapRectToScene(x, y, width, height);
         QRectF targetRect(0, 0, mappedRect.width(), mappedRect.height());
-        snapshot = QPixmap(mappedRect.size().toSize());
+        // starting with QPixmap.toImage to get the matching image format
+        snapshot = QPixmap(mappedRect.size().toSize()).toImage();
         snapshot.fill(Qt::transparent);
 
         QPainter painter(&snapshot);
@@ -134,8 +145,11 @@ bool DeclarativeScreenshots::take(qreal x, qreal y, qreal width, qreal height) {
         // If there's no target item, then take an actual screenshot of the
         // desktop root window.
         snapshot = QPixmap::grabWindow(QApplication::desktop()->winId(),
-                                       x, y, width, height);
+                                       x, y, width, height).toImage();
     }
+
+    if (m_rotation)
+        snapshot = snapshot.transformed(QTransform().rotate(m_rotation));
 
     QString pathname = QDir(m_path).filePath(m_name + timestamp + m_format);
     return snapshot.save(pathname);
