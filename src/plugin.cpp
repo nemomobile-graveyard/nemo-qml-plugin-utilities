@@ -43,6 +43,7 @@
 # include <QDeclarativeExtensionPlugin>
 #endif
 #include "declarativewindowattributes.h"
+#include "declarativescreenshots.h"
 
 class Q_DECL_EXPORT NemoUtilsPlugin : public QDeclarativeExtensionPlugin
 {
@@ -70,6 +71,7 @@ public:
         Q_ASSERT(uri == QLatin1String("org.nemomobile.utilities"));
 
         qmlRegisterType<DeclarativeWindowAttributes>(uri, 1, 0, "WindowAttributes");
+        qmlRegisterType<DeclarativeScreenshots>(uri, 1, 0, "Screenshots");
     }
 };
 

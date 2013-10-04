@@ -15,6 +15,8 @@ qmldir.path +=  $$target.path
 INSTALLS += qmldir
 
 SOURCES += plugin.cpp \
-    declarativewindowattributes.cpp
+    declarativewindowattributes.cpp \
+    declarativescreenshots.cpp
 
-HEADERS += declarativewindowattributes.h
+HEADERS += declarativewindowattributes.h \
+    declarativescreenshots.h
