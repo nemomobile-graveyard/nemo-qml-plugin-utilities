@@ -14,7 +14,6 @@ PkgConfigBR:
     - Qt5Core
     - Qt5Qml
     - Qt5Quick
-    - x11
 Files:
     - "%{_libdir}/qt5/qml/org/nemomobile/utilities/libnemoutilities.so"
     - "%{_libdir}/qt5/qml/org/nemomobile/utilities/qmldir"
